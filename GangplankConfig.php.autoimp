@@ -1,0 +1,38 @@
+<?
+	//
+	// GANGPLANK CONFIGURABLE PARAMETERS
+	//
+	// Edit these to configure Gangplank.
+	// 
+	
+	// Import config from ../site_vars.phtml
+	if (!isset($site_vars_included))
+		require_once('../site_vars.phtml');
+	
+	// --[ Database Settings ]--
+	define('GANGPLANK_DB_HOST', $db_host);
+	define('GANGPLANK_DB_USER', $db_user);
+	define('GANGPLANK_DB_PASS', $db_pw);
+	define('GANGPLANK_DB_DB',   $db_db);
+	
+	// --[ Misc Settings ]--
+	define('GANGPLANK_BASE_TABLE_PREFIX', 'm_');
+	define('GANGPLANK_DEBUG', false);
+	define('GANGPLANK_EXT', 'phtml');
+	// 'underscores' or 'camelcase'
+	define('GANGPLANK_TABLE_NAME_FORMAT', 'underscores');
+	
+	// --[ Icon and Appearance Settings ]--
+	define('GANGPLANK_USE_ICONS', true);
+	// Full or relative URL to the icon images folder:
+	define('GANGPLANK_ICON_URL', $site_url . 'gangplank/gangplankimages/');
+
+	// --[ Image and Asset Upload Settings ]--
+	// These URLs and paths should end with /
+	define('GANGPLANK_SCALER', 'gd');
+	@define('GANGPLANK_UL_PATH', $uploaded_img_path);
+	@define('GANGPLANK_UL_URL', $uploaded_img_url);
+	@define('GANGPLANK_IMAGEMAGICK_BINARY', $image_magick_path);
+	
+	// End of configurable parameters
+?>

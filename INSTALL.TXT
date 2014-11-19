@@ -1,0 +1,14 @@
+----[ Gangplank Install Instructions ]----
+
+Step 1: Install package (You have probably already done this)
+
+$ darcs get http://www.modernmethod.com/repo/gangplank/ gangplank
+
+This will put the software in the gangplank folder
+
+Step 2: Configure package
+
+$ mv GangplankConfig.php.default GangplankConfig.php
+
+Step 3: There is no step three.
+

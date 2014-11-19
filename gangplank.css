@@ -1,0 +1,123 @@
+/* BITS N PIECES */
+
+.gangplank-btn {
+	background: rgba(0, 0, 0, 0.05);
+	border-radius: 2px;
+	color: #333;
+	display: inline-block;
+	margin: 0 10px;
+	padding: 10px;
+	text-decoration: none;
+}
+
+/* EDIT FORM */
+
+.gangplank-edit label {
+	display: block;
+	font-weight: bold;
+}
+.gangplank-edit .help-text {
+	display: block;
+	color: #666;
+	font-weight: normal;
+	font-size: smaller;
+}
+.gangplank-edit .w-text {
+	width: 75%;
+}
+.gangplank-edit .w-textarea {
+	height: 200px !important;
+	width: 75%;
+}
+
+/* LIST - GENERAL */
+.gangplank-list {
+	border: 0;
+	border-collapse: collapse;
+	margin: 0;
+	max-width: 100%;
+	padding: 0;
+}
+.gangplank-list a img {
+	border: 0;
+	margin: 0 6px;
+}
+.gangplank-list caption {
+	color: white;
+	font-weight: bold;
+	font-size: larger;
+	background: #009;
+	padding: 5px;
+}
+.gangplank-list i.fa {
+}
+
+/* LIST - BODY */
+.gangplank-list tbody td {
+	padding: 8px;
+}
+.gangplank-list tbody td i.fa {
+}
+/* Every other row (.odd selector) gets a darker background */
+.gangplank-list tbody .odd td {
+	background: rgba(0, 0, 0, 0.01);
+}
+/* When you mouseover a row, highlight it (doesn't work for IE; that's ok) */
+.gangplank-list tbody tr:hover td {
+	background: #e0c0c0;
+}
+/* left-most column gets a darker left border.. */
+.gangplank-list tbody td:first-child {
+	border-left: 1px solid rgba(0, 0, 0, 0.1);
+}
+/* ..and the right-most too */
+.gangplank-list tbody td:last-child {
+	border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+/* ..and the bottom border of the last row */
+.gangplank-list tbody .lastrow td {
+}
+
+/* LIST - FOOTER */
+.gangplank-list tfoot td {
+	padding: 16px;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+	border-left: 1px solid rgba(0, 0, 0, 0.1);
+	border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+.gangplank-list tfoot td:first-child {
+}
+.gangplank-list tfoot td:last-child {
+}
+
+/* LIST - HEADER */ 
+.gangplank-list th {
+	background: rgba(0, 0, 0, 0.05);
+	padding: 16px;
+}
+.gangplank-list thead {
+	border-left: 1px solid rgba(0, 0, 0, 0.1);
+	border-right: 1px solid rgba(0, 0, 0, 0.1);
+	border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+.gangplank-list thead th {
+	text-align: left;
+}
+.gangplank-list thead th.curorderby {
+	background: white;
+}
+.gangplank-list thead th.curorderby:after {
+	content: " \2193";
+}
+.gangplank-list thead th:first-child {
+	border-left: 1px solid rgba(0, 0, 0, 0.1);
+}
+.gangplank-list thead th:last-child {
+	border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+.gangplank-list thead .pagination {
+	text-align: center;
+	border-bottom: 1px solid #ccc;
+	border-top: 0;
+}
+

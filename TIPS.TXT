@@ -1,0 +1,11 @@
+Tips for using Gangplank
+========================
+
+Misc stuff:
+
+- When you have custom configuration stuff, be sure you set it all up before
+	$plank->handleRequest(); handleRequest() makes a ton of decisions about what
+	to do based on your config stuff, so it should all be set up in advance
+	before the real work begins.
+
+
