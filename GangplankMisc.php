@@ -137,6 +137,13 @@
 	// Misc.
 	// 
 
+	function gp_is_ajax_request() {
+		if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']))
+			return true;
+		else
+			return false;
+	}
+
 	function gp_format_date($date) {
 		return date("m/d/y", strtotime($date));
 	}

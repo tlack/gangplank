@@ -392,7 +392,6 @@
 				$link_text = $page_num;
 			
 			$url = gp_add_url_arg(gp_my_url(), $this->start_var, $this_idx);
-			$url = gp_add_url_arg($url, 'gp_fetch', $this->plural_ws);
 			
 			if ($page_num == $cur_page_num)
 				$html = ' ' . $link_text . ' ';
@@ -790,6 +789,7 @@
 				}
 				
 				A.open(\"GET\", url, true);
+				A.setRequestHeader('X-Requested-With', 'Gangplank');
 				A.onreadystatechange = function() {
 					if (A.readyState != 4) 
 						return;
@@ -1048,18 +1048,21 @@
 				$w = $_REQUEST[$this->singular_ws . '_move'];
 				$this->handleMove($_REQUEST[$this->primary_key], $w);
 			}
-			
+
+			// the following two calls only make sense in an Ajax context,
+			// so bounce out if not 
+			if (!gp_is_ajax_request()) 
+				return;
+
 			if ($this->search_enabled &&
 					!empty($_REQUEST[$this->plural_ws.'_search'])) {
 				$this->handleSearch($_REQUEST[$this->plural_ws.'_search']);
 				exit;
 			}
 			
-			if (!empty($_REQUEST['gp_fetch']) 
-					&& $_REQUEST['gp_fetch'] === $this->plural_ws) {
-				echo $this->render();
-				exit;
-			}
+			// probably a pagination reuest;
+			echo $this->render();
+			exit;
 		}
 	}
 ?>
