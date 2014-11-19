@@ -60,6 +60,10 @@
 				array('title' => $delete,
 						  'callback' => array(&$this, 'handleDelete'));
 			$this->delete_callback = false;
+
+			$this->search_enabled = false;
+			// list of fields to search if search is turned on
+			$this->search_fields = array();
 			
 			$this->per_page = 100;
 			$this->max_col_length = 50;
@@ -260,6 +264,19 @@
 		function perPage() {
 			return $this->per_page;
 		}
+
+		function setSearchOptions($enabled, $search_fields = array()) {
+			$this->search_enabled = $enabled;
+			$this->search_fields = $search_fields;
+		}
+
+		function requestedSearchTerm() {
+			if ($this->search_enabled &&
+					!empty($_REQUEST[$this->plural_ws.'_search']))
+				return $_REQUEST[$this->plural_ws.'_saerch'];
+			else
+				return '';
+		}
 		
 		function renderHeader() {
 
@@ -267,6 +284,10 @@
 			
 			if ($this->use_ajax) 
 				$html .= "<div id=\"{$this->html_id}-enclosure\">";
+
+			if ($this->search_enabled) {
+				$html .= "<input type=text id='{$this->html_id}-search' name='{$this->plural_ws}-search' onchange='{$this->plural_ws}_search()'>";
+			}
 		
 			if ($this->show_group_controls) {
 				// if we are going to be using group controls (checkboxes), we'll set a hidden var.
@@ -317,7 +338,7 @@
 						// allow column sorting
 						$url = gp_add_url_arg(gp_my_url(), $this->sort_var, $col["name"]);
 						if ($this->use_ajax) {
-							$onclick = "onclick=\"return {$this->plural_ws}_switch('$url');\"";
+							$onclick = "onclick=\"return {$this->plural_ws}_reload('$url');\"";
 						} else {
 							$onclick = "";
 						}
@@ -377,7 +398,7 @@
 				$html = ' ' . $link_text . ' ';
 			else {
 				if ($this->use_ajax) 
-					$onclick = "onclick=\"return {$this->plural_ws}_switch('$url');\"";
+					$onclick = "onclick=\"return {$this->plural_ws}_reload('$url');\"";
 				else
 					$onclick = '';
 				$html = "<a href=\"$url\" class=\"page-link\" $onclick>$link_text</a> ";
@@ -711,7 +732,7 @@
 					$link = gp_interpUrl($this->move_link_url_up, $row);
 					$onclick = "";
 					if ($this->use_ajax)
-						$onclick = "onclick=\"return {$this->plural_ws}_switch('$link');\"";
+						$onclick = "onclick=\"return {$this->plural_ws}_reload('$link');\"";
 					$html .= "\t<td class=\"move\">";
 					$html .= "<a href=\"$link\" ${onclick}>$this->move_link_label_up</a>";
 					// $html .= "<a href=\"$link\" ${onclick}><img src=\"../up.gif\" border=\"0\" /></a>";
@@ -720,7 +741,7 @@
 					$link = gp_interpUrl($this->move_link_url_down, $row);
 					$onclick = "";
 					if ($this->use_ajax)
-						$onclick = "onclick=\"return {$this->plural_ws}_switch('$link');\"";
+						$onclick = "onclick=\"return {$this->plural_ws}_reload('$link');\"";
 					$html .= "\t<td class=\"move\">";
 					$html .= "<a href=\"$link\" ${onclick}>$this->move_link_label_down</a>";
 					// $html .= "<a href=\"$link\" ${onclick}><img src=\"../down.gif\" border=\"0\" /></a>";
@@ -747,7 +768,7 @@
 			$html = "
 			
 			<script>
-			function {$this->plural_ws}_switch(url) {
+			function {$this->plural_ws}_reload(url) {
 				var A;
 				
 				document.body.style.cursor = 'wait';
@@ -780,6 +801,12 @@
 				A.send(null);
 				delete A;
 				return false;
+			}
+			function {$this->plural_ws}_search() {
+				var searchTerm = document.getElementById('${html_id}-search').value,
+				    searchUrlTemplate = " . json_encode(gp_add_url_arg(gp_my_url(), $this->plural_ws.'_search', '_TERM_')) . ";
+				searchUrlTemplate = searchUrlTemplate.replace('_TERM_', encodeURIComponent(searchTerm));
+				{$this->plural_ws}_reload(searchUrlTemplate);
 			}
 			function {$this->plural_ws}_toggle_chex() {
 				if (! document.getElementsByTagName)
@@ -971,11 +998,26 @@
 				}
 			}
 		}
+
+		function handleSearch($term) {
+			$curWhere = $this->where;
+			$clauses = array();
+		
+			foreach ($this->search_fields as $field) {
+				$clauses[] = " ($field LIKE '%$term%') ";
+			}
+
+			$clauses_sql = join(' OR ', $clauses);
+			$where = "($curWhere) AND ($clauses_sql)";
+
+			$this->setWhere($where);
+			echo $this->render();
+		}
 				
 		function handleRequest() {
 
 			$this->loadColumns();
-					
+
 			// If the URL indicates that we should be deleting some entries..
 			if (! empty($_REQUEST[$this->singular_ws . '_do_group'])) {
 				$clicked_group = $_REQUEST[$this->singular_ws . '_do_group'];
@@ -1007,12 +1049,14 @@
 				$this->handleMove($_REQUEST[$this->primary_key], $w);
 			}
 			
-			if (! $this->use_ajax) return;
+			if ($this->search_enabled &&
+					!empty($_REQUEST[$this->plural_ws.'_search'])) {
+				$this->handleSearch($_REQUEST[$this->plural_ws.'_search']);
+				exit;
+			}
 			
-			$key = 'HTTP_X_FETCHER_' . strtoupper($this->plural_ws);
-
-			if (! empty($_SERVER[$key]) ||
-					$_REQUEST['gp_fetch'] === $this->plural_ws) {
+			if (!empty($_REQUEST['gp_fetch']) 
+					&& $_REQUEST['gp_fetch'] === $this->plural_ws) {
 				echo $this->render();
 				exit;
 			}
