@@ -316,6 +316,10 @@
 				$html .= '<th class="group">&nbsp;</th>';
 			}
 
+			if ($this->show_edit_link) {
+				$html .= '<th class="edit">&nbsp;</th>';
+			}
+
 			$this->determineFinalOrderBy();
 			
 			foreach ($this->visibleColumns() as $col) {
@@ -350,10 +354,6 @@
 					// disable column sorting; sort key move up/down enabled
 					$html .= "<th class=\"$class\">$label</th>\n";
 				}
-			}
-			
-			if ($this->show_edit_link) {
-				$html .= '<th class="edit">&nbsp;</th>';
 			}
 			
 			if ($this->show_move_link) {
@@ -704,14 +704,7 @@
 					$html .= "<input type=\"checkbox\" name=\"{$this->singular_ws}_checked_$primary_key_val\" value=\"1\">";
 					$html .= "</td>\n";
 				}
-	
-				foreach ($visible_cols as $col) {
-					$name = $col['name'];
-					$html .= '<td class="' . $name . '">';
-					$html .= $this->getColumnRepr($col, $row);
-					$html .= "</td>\n";
-				}
-				
+
 				if ($this->show_edit_link) {
 					$link = $this->edit_link_url;
 					$link = str_replace('{KEY}', urlencode($primary_key_val), $link);
@@ -727,6 +720,13 @@
 					$html .= "</td>\n";
 				}
 
+				foreach ($visible_cols as $col) {
+					$name = $col['name'];
+					$html .= '<td class="' . $name . '">';
+					$html .= $this->getColumnRepr($col, $row);
+					$html .= "</td>\n";
+				}
+				
 				if ($this->show_move_link) {
 					$link = gp_interpUrl($this->move_link_url_up, $row);
 					$onclick = "";
