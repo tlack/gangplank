@@ -14,6 +14,8 @@
 			$this->list = new ListPlank($singular, $plural, $data_source);
 			$this->new_record = new NewRecordPlank($singular, $plural, $data_source);
 			$this->edit = new EditPlank($singular, $plural, $data_source);
+
+			$this->show_msgs = true;
 			
 			if ($data_source)
 				$this->setDataSource($data_source);
@@ -61,6 +63,13 @@
 		}
 		
 		function render() {
+			if ($this->show_msgs) {
+				if (!empty($_REQUEST['msgs'])) {
+					foreach ($_REQUEST['msgs'] as $msg) {
+						echo htmlspecialchars($msg) . "<br/>";
+					}
+				}
+			}
 			if ($this->mode == 'list') 
 				return $this->list->render();
 			if ($this->mode == 'new_record') 
