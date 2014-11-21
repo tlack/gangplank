@@ -187,6 +187,9 @@
 		}
 	}
 
+	define('GP_RAW_VALUE_START', "__{{");
+	define('GP_RAW_VALUE_END', "}}__");
+
 	function gp_insert_row($table, $values) {
     $keys = array();
     $vals = array();
@@ -194,8 +197,8 @@
     // filter values we want; too complex for array_map/array_filter
     foreach ($values as $k=>$v) {
       if (is_string($k)) {
-        $keys[] = mes($k);
-        $vals[] = mes((string)$v);
+        $keys[] = gp_escapeSql($k);
+        $vals[] = gp_escapeSql((string)$v);
       }
     }
     $keys_sql = join(",", $keys);
@@ -207,8 +210,10 @@
         ('$vals_sql')
       ";
 
-    $qs = str_replace("'" . X_RAW_VALUE_START, "", $qs);
-    $qs = str_replace(X_RAW_VALUE_END . "'", "", $qs);
+		// allow for literal non-quoted values:
+    $qs = str_replace("'" . GP_RAW_VALUE_START, "", $qs);
+    $qs = str_replace(GP_RAW_VALUE_END . "'", "", $qs);
+
 		gp_update($qs);
 		return gp_insert_id();
   }
