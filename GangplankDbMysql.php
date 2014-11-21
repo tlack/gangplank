@@ -80,7 +80,23 @@
 	{
 		return mysql_fetch_array($res);
 	}
+		
+	function gp_insert_id($res = false, $pass = false)
+	{
+		global $gp_db_con;
+		
+		return mysql_insert_id($gp_db_con);
+	}
 	
+	function gp_dbdate()
+	{
+		return "now()";
+	}
+
+	//
+	// Higher-level query functions
+	//
+
 	function gp_all_rows($qs)
 	{
 		$c = gp_connect();
@@ -121,17 +137,23 @@
 		}
 		return $rows;
 	}
-	
-	function gp_insert_id($res = false, $pass = false)
+
+	function gp_one_column($qs, $col)
 	{
-		global $gp_db_con;
-		
-		return mysql_insert_id($gp_db_con);
-	}
-	
-	function gp_dbdate()
-	{
-		return "now()";
+		$c = gp_connect();
+		$res = gp_query($qs, $c);
+		if (gettype($res) == "resource") {
+			$a = gp_fetch($res);
+			if (isset($a[$col])) {
+				return $a[$col];
+			}
+			else {
+				return false;
+			}
+		}
+		else {
+			return false;
+		}
 	}
 
 	// Return one row of records from a query
@@ -165,21 +187,4 @@
 		}
 	}
 
-	function gp_one_column($qs, $col)
-	{
-		$c = gp_connect();
-		$res = gp_query($qs, $c);
-		if (gettype($res) == "resource") {
-			$a = gp_fetch($res);
-			if (isset($a[$col])) {
-				return $a[$col];
-			}
-			else {
-				return false;
-			}
-		}
-		else {
-			return false;
-		}
-	}
 ?>
