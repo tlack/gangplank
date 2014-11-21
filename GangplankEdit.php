@@ -22,15 +22,20 @@
 			$this->buttons = array();
 			
 			// save button configuration 
+			$save_button_label = 'Save changes';
 			$save_post_url = $this->plural_ws . GANGPLANK_EXT . '?msgs[]=' . urlencode("Changes to $singular saved.");
-			$this->addButton('save', true, 'Save Changes', $save_post_url, '');
+			$this->addButton('save', true, $save_button_label, $save_post_url, '');
 
+			$clone_button_label = ucwords('Clone');
+			$clone_button_onclock = "return confirm('Are you sure you want to make a copy of this $singular?');";
+			$this->addButton('clone', true, $clone_button_label, false, $clone_button_onclick, array($this, 'cloneRecord'));
+			
 			// delete button configuration
 			$delete_post_url = $this->plural_ws . GANGPLANK_EXT . '?msgs[]=' . urlencode("Ok, that $singular was deleted.");
 			$delete_button_label = ucwords('Delete ' . $singular);
 			$delete_button_onclick = "return confirm('Are you sure you want to delete this $singular?');";
 			$this->addButton('delete', true, $delete_button_label, $delete_post_url, $delete_button_onclick);
-			
+
 			// passed form values
 			$this->passed_form_values = array();
 			
@@ -1540,6 +1545,27 @@
 			// $msgs[] = "Changes to $this->singular saved.";
 		}
 
+		function cloneRecord($row) {
+			$pk_col = '';
+			foreach ($this->cols as $col=>$attrs) {
+				if ($attrs['is_primary_key']) {
+					unset($row[$col]);
+					$pk_col = $col;
+				}
+			}
+			$new_pk = gp_insert_row($this->data_source, $row);
+			$url = gp_my_url();
+			if ($pk_col) {
+				$url = gp_remove_url_arg($url, $pk_col);
+				$url = gp_add_url_arg($url, $pk_col, $new_pk);
+				$url = gp_add_url_arg($url, 'msgs[]', "You are editing the {$this->singular} clone.");
+			} else {
+				$url = $this->plural_ws . GANGPLANK_EXT . '?msgs[]=' . urlencode("{$this->singular} cloned.");
+			}
+			gp_goto($url);
+			exit;
+		}
+
 		// Handle an incoming request; this could mean to save or delete the record.
 		function handleRequest($force = false) {
 			// should have already happened but let's be safe.
@@ -1578,7 +1604,7 @@
 				if (!empty($_POST[$id])) {
 					$this->saveChanges();
 					if (!empty($button['callback']))
-						call_user_func($button['callback']);
+						call_user_func($button['callback'], $row);
 					else
 						gp_goto(gp_interpUrl($button['post_url'], $row));
 				}
