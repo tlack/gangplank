@@ -187,4 +187,29 @@
 		}
 	}
 
+	function gp_insert_values($table, $values) {
+    $keys = array();
+    $vals = array();
+
+    // filter values we want; too complex for array_map/array_filter
+    foreach ($values as $k=>$v) {
+      if (is_string($k)) {
+        $keys[] = mes($k);
+        $vals[] = mes((string)$v);
+      }
+    }
+    $keys_sql = join(",", $keys);
+    $vals_sql = join("','", $vals);
+    $qs = "
+      insert into $table
+        ($keys_sql)
+      values
+        ('$vals_sql')
+      ";
+
+    $qs = str_replace("'" . X_RAW_VALUE_START, "", $qs);
+    $qs = str_replace(X_RAW_VALUE_END . "'", "", $qs);
+    return xupdate($qs);
+  }
+
 ?>
