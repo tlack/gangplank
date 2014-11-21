@@ -187,7 +187,7 @@
 		}
 	}
 
-	function gp_insert_values($table, $values) {
+	function gp_insert_row($table, $values) {
     $keys = array();
     $vals = array();
 
@@ -209,7 +209,8 @@
 
     $qs = str_replace("'" . X_RAW_VALUE_START, "", $qs);
     $qs = str_replace(X_RAW_VALUE_END . "'", "", $qs);
-    return xupdate($qs);
+		gp_update($qs);
+		return gp_insert_id();
   }
 
 ?>
