@@ -12,6 +12,7 @@
 	require_once(GANGPLANK_BASE . 'GangplankBase.php');
 	require_once(GANGPLANK_BASE . 'GangplankDbMysql.php');
 	require_once(GANGPLANK_BASE . 'GangplankEdit.php');
+	require_once(GANGPLANK_BASE . 'GangplankForms.php');
 	require_once(GANGPLANK_BASE . 'GangplankList.php');
 	require_once(GANGPLANK_BASE . 'GangplankListSimple.php');
 	require_once(GANGPLANK_BASE . 'GangplankMisc.php');
