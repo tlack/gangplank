@@ -33,7 +33,7 @@
 			foreach ($this->cols as $name => $col) {
 				if (!empty($_REQUEST['gp_auto_limit_'.$name])) {
 					// picking up value from url..
-					$this->cols[$name]['value'] = $_REQUEST['gp_new_'.$name];
+					$this->cols[$name]['value'] = $_REQUEST['gp_auto_limit_'.$name];
 					$this->cols[$name]['set_manually'] = true;
 				}
 			}
@@ -67,10 +67,9 @@
 				gp_die('handleRequest(): could not determine primary key');
 			
 			// Determine extra fields that require values.
-			
 			$extra_cols = '';
 			$extra_vals = '';
-			
+
 			foreach ($this->cols as $col) {
 				if ($col['name'] == 'sort_key') {
 					// go through a mission to find a proper sort key
