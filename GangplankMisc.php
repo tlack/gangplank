@@ -25,6 +25,15 @@
 			return NULL;
 		}
 	}
+
+	// Return all values of $col_name from each item in $list as a new array
+	function gp_pluck($list, $col_name) {
+		$out = array();
+		foreach ($list as $v) {
+			$out[] = $v[$col_name];
+		}
+		return $out;
+	}
 	
 	//
 	// --[ URL Handling ]--
