@@ -273,7 +273,7 @@
 		function requestedSearchTerm() {
 			if ($this->search_enabled &&
 					!empty($_REQUEST[$this->plural_ws.'_search']))
-				return $_REQUEST[$this->plural_ws.'_saerch'];
+				return $_REQUEST[$this->plural_ws.'_search'];
 			else
 				return '';
 		}
