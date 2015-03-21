@@ -195,6 +195,11 @@
 		}
 		
 		function setDefaultOrderBy($col) {
+			// name shortened to simply orderBy()
+			$this->orderBy($col);
+		}
+
+		function orderBy($col) {
 			$this->default_order_by = $col;
 		}
 		
