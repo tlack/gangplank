@@ -114,7 +114,7 @@
 		
 		function getValueList($col) {
 			if (preg_match("/^enum\((.*)\)$/", $col["Type"], $a)) {
-				$terms = split(",", $a[1]);
+				$terms = explode(",", $a[1]);
 				$a = array();
 				foreach ($terms as $t) {
 					if (substr($t, 0, 1) == "'") 
@@ -479,7 +479,7 @@
 				$seen = array();
 				$str = $args[0];
 				$str = str_replace(" ", "", $str);
-				$parts = split(",", $str);
+				$parts = explode(",", $str);
 				$n = 0;
 				foreach ($parts as $name) {
 					if (! isset($this->cols[$name])) 

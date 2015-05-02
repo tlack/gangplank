@@ -27,7 +27,7 @@
 			$this->addButton('save', true, $save_button_label, $save_post_url, '');
 
 			$clone_button_label = ucwords('Clone');
-			$clone_button_onclock = "return confirm('Are you sure you want to make a copy of this $singular?');";
+			$clone_button_onclick = "return confirm('Are you sure you want to make a copy of this $singular?');";
 			$this->addButton('clone', true, $clone_button_label, false, $clone_button_onclick, array($this, 'cloneRecord'));
 			
 			// delete button configuration
@@ -340,10 +340,10 @@
 				<label for=\"$name\">
 					$col[label]
 				</label>
-				$help
 				<input type=\"text\" name=\"x_$name\" id=\"$name\"
 					class=\"w w-text\"
-					value=\"$val\" $js />";
+					value=\"$val\" $js />
+				$help";
 			return $html;
 		}
 
@@ -866,7 +866,7 @@
 				
 			// if ratio is a string like 1:2, convert to float 1/2
 			if (is_string($ratio)) {
-				$ratio_parts = split("\:", $ratio);
+				$ratio_parts = preg_split("/\/:/i", $ratio);
 				gp_assert(count($ratio_parts) == 2, "_generateCropSpec: invalid ratio '$ratio'");
 				$ratio = (float)$ratio_parts[0]/(float)$ratio_parts[1];
 			}
