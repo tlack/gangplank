@@ -10,7 +10,7 @@
 
 	require_once(GANGPLANK_BASE . 'GangplankAuto.php');
 	require_once(GANGPLANK_BASE . 'GangplankBase.php');
-	require_once(GANGPLANK_BASE . 'GangplankDbMysql.php');
+	require_once(GANGPLANK_BASE . 'GangplankDbPdo.php');
 	require_once(GANGPLANK_BASE . 'GangplankEdit.php');
 	require_once(GANGPLANK_BASE . 'GangplankForms.php');
 	require_once(GANGPLANK_BASE . 'GangplankList.php');
