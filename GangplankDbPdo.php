@@ -37,13 +37,13 @@
 		}
 	}
 	
-	function gp_escape_sql($data) {
+	function gp_escapeSql($data) {
 		global $gp_db_con;
 		return substr($gp_db_con->quote($data),1,-1);
 	}
 
 	function gp_escapeSqlMaybe($data) {
-		return !get_magic_quotes_gpc() ? gp_escape_sql($data) : $data;
+		return !get_magic_quotes_gpc() ? gp_escapeSql($data) : $data;
 	}
 	
 	function gp_query($qs, $c)
