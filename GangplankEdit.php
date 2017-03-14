@@ -1088,7 +1088,6 @@
 				  from $foreign_table
 				 where $foreign_desc <> ''
 							 $where_clause
-				 group by $foreign_desc
 				 order by $foreign_desc
 				 ";
 			// echo "<p>$qs</p>";
