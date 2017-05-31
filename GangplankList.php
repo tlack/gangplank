@@ -78,7 +78,6 @@
 		}
 
 		function setWhereFromUrl() {
-
 			// use existing where clasues, simply add more
 			$clauses = array();
 			if (!empty($this->where)) {
@@ -108,12 +107,9 @@
 		
 		function numCols() {
 			$n = count($this->visibleColumns());
-			if ($this->show_group_controls)
-				$n++;
-			if ($this->show_move_link)
-				$n += 2;
-			if ($this->show_edit_link)
-				$n++;
+			if ($this->show_group_controls) $n++;
+			if ($this->show_move_link) $n += 2;
+			if ($this->show_edit_link) $n++;
 			return $n;
 		}
 		
@@ -123,12 +119,31 @@
 			$from = $this->data_source;
 			$where = $this->where;
 			$pri = $this->primary_key;
-			$qs = "
-				select *
-					from $from
-				 where $pri = '$primary_key' 
-				 limit 1";
-			return xone_row($qs);
+			if (is_array($primary_key)) {
+				$primary_key = join("','", array_map('gp_escapeSqlMaybe',$primary_key));
+				$clause = "$pri in ('$primary_key')";
+				$qs = "
+					select *
+						from $from
+					 where $clause";
+				return gp_all_rows_as_array($qs,$pri);
+			} else {
+				$clause = "$pri = '$primary_key'";
+				$qs = "
+					select *
+						from $from
+					 where $clause
+					 limit 1";
+				return gp_one_row($qs);
+			}
+		}
+
+		function getRequestCheckedKeys() {
+			$c=[];
+			foreach ($_REQUEST as $k=>$v) 
+				if (preg_match("/{$this->singular_ws}_checked_(.*)/", $k, $aa))
+					$c[]=$aa[1];
+			return $c;
 		}
 		
 		// Set a callback to be called whenever the value of $column changes from what
@@ -853,6 +868,8 @@
 					if ($this->show_group_controls) {
 						$items = array();
 						
+						$items[] = 'Selected items:';
+
 						$onclick = $this->plural_ws . '_toggle_chex();return false;';
 						$toggle_label = 'Toggle all';
 						if (defined('GANGPLANK_USE_ICONS') && GANGPLANK_USE_ICONS)
@@ -926,8 +943,6 @@
 		}
 
 		function handleMove($move_pk, $move) {
-			$c = xconnect();
-			
 			$pk_col	= $this->primary_key;
 			$table	= $this->data_source;
 
@@ -1042,7 +1057,7 @@
 					//echo "TESTING $id vs $clicked_btn<p>";
 					if ($clicked_btn == $id) {
 						// echo "DOING $short_name $control[callback]...";
-						call_user_func($btn['callback']);
+						call_user_func($btn['callback'], $this->getRequestCheckedKeys(), $this);
 					}
 				}
 			}

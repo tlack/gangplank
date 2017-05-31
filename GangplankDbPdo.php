@@ -1,4 +1,6 @@
 <?
+	if(!function_exists('gp_die')) require(dirname(__FILE__).'/GangplankMisc.php');
+
 	$gp_db_con = false;
 	
 	function gp_connect() {
@@ -190,6 +192,7 @@
 	define('GP_RAW_VALUE_END', "}}__");
 
 	function gp_insert_row($table, $values) {
+		$c = gp_connect();
     $keys = array();
     $vals = array();
 

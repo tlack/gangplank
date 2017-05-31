@@ -297,6 +297,15 @@
 		return htmlspecialchars($v);
 	}
 
+	function gp_fmt_colname($name) {
+		$name = str_replace("_", " ", $name);
+		$name = ucwords($name);
+		$name = str_replace("Dt", "Date", $name);
+		$name = str_replace(" Key", " #", $name);
+		$name = str_replace("Url", "Web URL", $name);
+		return $name;
+	}
+
 	function gp_trimStr($str, $max_col_len = false) {
 		if (!$max_col_len)
 			$max_col_len = 50;

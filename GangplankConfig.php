@@ -24,10 +24,10 @@
 
 	// --[ Image and Asset Upload Settings ]--
 	// These URLs and paths should end with /
-	define("GANGPLANK_SCALER", "gd");
-	define("GANGPLANK_UL_PATH", "/home/socialtray/app/dev/ul/");
+	define("GANGPLANK_SCALER", "imagemagick");
+	define("GANGPLANK_UL_PATH", dirname(__FILE__).'/../../ul/');
 	define("GANGPLANK_UL_URL", "/ul/");
-	define("GANGPLANK_IMAGEMAGICK_BINARY", "/usr/local/bin/convert");
+	define("GANGPLANK_IMAGEMAGICK_BINARY", "/usr/bin/convert");
 	
 	// End of configurable parameters
 ?>
