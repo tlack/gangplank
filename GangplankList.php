@@ -29,6 +29,9 @@
 				$label = "Create new $singular";
 			$this->addButton('add', array('label' => $label, 'url' => $url));
 
+			$this->export_handler_callback=false;
+			$this->addButton('_export', array('label' => 'Export all', 'callback' => array(&$this,'exportAll')));
+
 			$this->show_move_link = false;
 			$this->move_link_url_up = '';
 			$this->move_link_url_down = '';
@@ -208,6 +211,8 @@
 				gp_die('removeGroupControl(): unknown id "' . $id . '"');
 			unset($this->group_controls[$id]);
 		}
+
+		// Stuff related to Order By:
 		
 		function setDefaultOrderBy($col) {
 			// name shortened to simply orderBy()
@@ -227,6 +232,25 @@
 						$this->order_by = $this->default_order_by;
 			}
 		}
+
+		function getOrderByClauseSQL() {
+			// If the selected order by has an order_by_clause setting, 
+			// we need to order by that clause instead of the column name.
+			// This is useful for virtual columns that have no real analog inside
+			// the database that we could sort by.
+			if (!empty($this->order_by) &&
+					!empty($this->cols[$this->order_by]) &&
+					!empty($this->cols[$this->order_by]['order_by_clause'])) {
+				$order_by_clause = ' order by ' . $this->cols[$this->order_by]['order_by_clause'] . ' ';
+			} else {
+				if (!empty($this->order_by)) 
+					$order_by_clause = ' order by ' . $this->order_by;
+				else
+					$order_by_clause = '';
+			}
+			return $order_by_clause;
+		}
+		
 		
 		// Set the behavior of the Add link at the bottom of the form. 
 		function setAddLink($show, $url = false, $label = false) {
@@ -628,7 +652,22 @@
 			
 			return $html;
 		}
-		
+	
+		function buildFinalResultSet() {
+			$start = $this->startIndex();
+			$per_page = $this->perPage();
+			$this->determineFinalOrderBy();
+			$order_by_clause = $this->getOrderByClauseSQL();
+			$from = $this->getFromClause();
+			$qs = "
+				select *
+				  from $from
+				 where ($this->where)
+				 $order_by_clause
+				 limit $start,$per_page";
+			$rows = gp_all_rows($qs);
+			return $rows;
+		}
 		
 		function renderBodyNoResults() {
 			$n = $this->numCols();
@@ -665,6 +704,8 @@
 			
 			$start = $this->startIndex();
 			$per_page = $this->perPage();
+
+			/*
 			
 			$this->determineFinalOrderBy();
 						
@@ -691,6 +732,9 @@
 				 $order_by_clause
 				 limit $start,$per_page";
 			$rows = gp_all_rows($qs);
+			*/
+
+			$rows = $this->buildFinalResultSet();
 			
 			$row_n = 0;
 			$n_rows = count($rows);
@@ -940,6 +984,30 @@
 			$html .= $this->renderBody();
 			$html .= $this->renderFooter();
 			return $html;
+		}
+
+		function exportAll() {
+			if($this->export_handler_callback) 
+				return $this->export_handler_callback();
+			$rows = $this->buildFinalResultSet();
+			$file_url=$this->plural_ws.'-'.date('Ymd-his').'.csv';
+			$force_dl=1;
+			if($force_dl){
+				header('Content-Type: application/octet-stream');
+				header("Content-Transfer-Encoding: Binary"); 
+				header("Content-disposition: attachment; filename=\"" . basename($file_url) . "\""); 
+			}
+			$fp = fopen('php://temp', 'w+');
+			$n=0;
+			foreach ($rows as $row) {
+				if($n===0) fputcsv($fp,array_keys($row));
+				fputcsv($fp,$row);
+			}
+			rewind($fp);
+			$data=stream_get_contents($fp);
+			fclose($fp);
+			echo $data;
+			exit;
 		}
 
 		function handleMove($move_pk, $move) {
